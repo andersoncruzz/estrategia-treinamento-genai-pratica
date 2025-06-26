@@ -1,31 +1,30 @@
-# estrategia-treinamento-genai-pratica
+# Sistema de Agendamento de Serviços
 
-A entrega do projeto deve ser enviada um Pull Request com o nome da Branch deve ser (nome 1)-(nome 2)-(tema projeto)
+Este projeto é um backend em Python/Django para agendamento de serviços, onde:
+- O administrador pode restringir dias e horários disponíveis.
+- O usuário pode adicionar um ou vários dias para agendamento, definindo hora inicial e final para cada período.
+- O banco de dados utilizado é PostgreSQL.
 
-Recomendamos que o projeto seja feita em dupla
+## Como rodar o projeto
 
-TEMAS:
+1. Instale as dependências:
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Configure o banco de dados PostgreSQL no arquivo `agendamento/settings.py`.
+3. Execute as migrações:
+   ```bash
+   python manage.py migrate
+   ```
+4. Inicie o servidor:
+   ```bash
+   python manage.py runserver
+   ```
 
-## Agendamento de Consultas
--	Funcionalidade: cadastrar pacientes, profissionais e horários disponíveis.
--	Tópicos: CRUD, regras de horário, endpoint para listar agendamentos por data.
-## Cadastro de Produtos e Pedidos de Comida
--	Funcionalidade: cadastrar produtos, criar pedidos com múltiplos itens.
--	Tópicos: relacionamento 1-N (pedido-produtos), cálculo de total.
-## Controle de Tarefas (To-Do List) com Prioridade
--	Funcionalidade: criar tarefas, marcar como concluídas, filtrar por prioridade.
--	Tópicos: CRUD, enums, filtros
-## Sistema de Reservas de Salas
--	Funcionalidade: reservar salas por data e horário.
--	Tópicos: validação de conflito, visualização de agenda.
-## Controle de Estoque Simples
--	Funcionalidade: cadastrar itens, ajustar entradas e saídas.
--	Tópicos: operações de crédito/débito em quantidade
-## Controle de Empréstimo de Livros para Bibliotecas
--	Cadastrar livros, usuários e empréstimos.
--	Validar se o livro está disponível
--	Listar livros atrasados.
-## Agenda de Contatos Pessoais
--	Cadastrar nome, telefone, e-mail, observações.
--	Buscar por nome ou inicial.
+## Estrutura inicial
+- Django
+- PostgreSQL
 
+## Customizações futuras
+- Modelos para usuários, administradores, restrições de agenda e agendamentos.
+- APIs para gerenciamento de horários e agendamentos.
