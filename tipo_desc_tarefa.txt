@@ -1,0 +1,12 @@
+1|Comprar comida
+2|Dormir
+3|Trabalhar
+4|Dirigir
+5|Ganhar dinheiro
+6|Matar
+7|Fazer o número 2
+8|Fazer o número 1
+9|Andar
+10|Namorar
+11|Correr
+12|Dançar
