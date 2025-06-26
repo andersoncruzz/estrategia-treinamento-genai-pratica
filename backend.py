@@ -7,7 +7,8 @@ from typing import List
 from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session, relationship
-import datetime
+import logging
+import os
 
 # Configuração do banco de dados SQLite
 SQLALCHEMY_DATABASE_URL = "sqlite:///./database.db"
@@ -98,14 +99,49 @@ def get_db():
     finally:
         db.close()
 
+# Configuração do logging
+LOG_DIR = 'logs'
+os.makedirs(LOG_DIR, exist_ok=True)
+
+logging.basicConfig(level=logging.DEBUG)
+
+loggers = {}
+for level, fname in [
+    (logging.DEBUG, 'debug.log'),
+    (logging.INFO, 'info.log'),
+    (logging.WARNING, 'warning.log'),
+    (logging.ERROR, 'error.log'),
+]:
+    logger = logging.getLogger(str(level))
+    handler = logging.FileHandler(os.path.join(LOG_DIR, fname), encoding='utf-8')
+    handler.setLevel(level)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(level)
+    loggers[level] = logger
+
+# Função utilitária para logar em todos os níveis
+def log(level, msg):
+    if level in loggers:
+        loggers[level].log(level, msg)
+    else:
+        logging.log(level, msg)
+
 # Endpoints CRUD para Postos
 @app.post("/postos", response_model=Posto)
 def create_posto(posto: Posto, db: Session = Depends(get_db)):
-    db_posto = PostoDB(**posto.dict())
-    db.add(db_posto)
-    db.commit()
-    db.refresh(db_posto)
-    return db_posto
+    log(logging.INFO, f"Criando posto: {posto.nome}")
+    try:
+        db_posto = PostoDB(**posto.dict())
+        db.add(db_posto)
+        db.commit()
+        db.refresh(db_posto)
+        log(logging.DEBUG, f"Posto criado com sucesso: {db_posto}")
+        return db_posto
+    except Exception as e:
+        log(logging.ERROR, f"Erro ao criar posto: {e}")
+        raise
 
 @app.get("/postos", response_model=List[Posto])
 def list_postos(db: Session = Depends(get_db)):
