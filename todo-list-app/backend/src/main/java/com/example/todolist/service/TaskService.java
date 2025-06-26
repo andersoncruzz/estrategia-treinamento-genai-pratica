@@ -3,6 +3,7 @@ package com.example.todolist.service;
 import com.example.todolist.model.Task;
 import com.example.todolist.repository.TaskRepository;
 import com.example.todolist.enums.Status;
+import com.example.todolist.enums.Priority;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,18 +29,18 @@ public class TaskService {
         return taskRepository.findById(id);
     }
 
-    public Task updateTask(Long id, Task taskDetails) {
+    public Optional<Task> updateTask(Long id, Task taskDetails) {
         Task task = taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Task not found"));
-        task.setName(taskDetails.getName());
+        task.setTaskName(taskDetails.getTaskName());
         task.setPriority(taskDetails.getPriority());
-        return taskRepository.save(task);
+        return Optional.of(taskRepository.save(task));
     }
 
     public void deleteTask(Long id) {
         taskRepository.deleteById(id);
     }
 
-    public List<Task> filterTasksByPriority(String priority) {
+    public List<Task> filterTasksByPriority(Priority priority) {
         return taskRepository.findByPriority(priority);
     }
 

@@ -3,7 +3,7 @@ package com.example.todolist.model;
 import com.example.todolist.enums.Priority;
 import com.example.todolist.enums.Status;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "tasks")

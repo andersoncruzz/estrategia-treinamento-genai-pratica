@@ -1,11 +1,14 @@
 package com.example.todolist.controller;
 import com.example.todolist.model.Task;
 import com.example.todolist.service.TaskService;
+import com.example.todolist.enums.Priority;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -20,18 +23,23 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
-        return taskService.getTaskById(id);
+    public ResponseEntity<Task> getTask(@PathVariable Long id) {
+        Optional<Task> task = taskService.getTaskById(id);
+        return task.map(ResponseEntity::ok)
+                   .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Task createTask(@RequestBody Task task) {
-        return taskService.createTask(task);
+    public ResponseEntity<Task> createTask(@RequestBody Task task) {
+        Task created = taskService.createTask(task);
+        return ResponseEntity.ok(created);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task) {
-        return taskService.updateTask(id, task);
+        Optional<Task> updated = taskService.updateTask(id, task);
+        return updated.map(ResponseEntity::ok)
+                      .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
@@ -42,6 +50,9 @@ public class TaskController {
 
     @GetMapping("/filter")
     public List<Task> filterTasksByPriority(@RequestParam String priority) {
-        return taskService.filterTasksByPriority(priority);
+        Priority enumPriority = Priority.valueOf(priority);
+        return taskService.filterTasksByPriority(enumPriority);
     }
+
+
 }
