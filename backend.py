@@ -1,45 +1,50 @@
+# backend.py
+# API backend para gerenciamento de postos, combustíveis, usuários e registros de preços usando FastAPI.
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
 
+# Instancia a aplicação FastAPI
 app = FastAPI()
 
-# Modelos
+# Modelos de dados
 class Posto(BaseModel):
-    id: int
-    nome: str
-    endereco: str
-    latitude: float
-    longitude: float
-    cor: str
+    id: int  # Identificador único do posto
+    nome: str  # Nome do posto
+    endereco: str  # Endereço do posto
+    latitude: float  # Latitude do posto
+    longitude: float  # Longitude do posto
+    cor: str  # Cor para exibição
 
 class Combustivel(BaseModel):
-    id: int
-    nome: str
+    id: int  # Identificador único do combustível
+    nome: str  # Nome do combustível
 
 class Usuario(BaseModel):
-    id: int
-    nome: str
-    email: str
+    id: int  # Identificador único do usuário
+    nome: str  # Nome do usuário
+    email: str  # Email do usuário
 
 class RegistroPreco(BaseModel):
-    id: int
-    posto_id: int
-    combustivel_id: int
-    valor: float
-    usuario_id: int
-    data: str  # ISO date
+    id: int  # Identificador único do registro
+    posto_id: int  # ID do posto relacionado
+    combustivel_id: int  # ID do combustível relacionado
+    valor: float  # Valor do combustível
+    usuario_id: int  # ID do usuário que registrou
+    data: str  # Data do registro (formato ISO)
 
-# Bancos de dados em memória
-postos_db = []
-combustiveis_db = []
-usuarios_db = []
-registros_precos_db = []
+# Bancos de dados em memória (listas para simular armazenamento)
+postos_db = []  # Lista de postos
+combustiveis_db = []  # Lista de combustíveis
+usuarios_db = []  # Lista de usuários
+registros_precos_db = []  # Lista de registros de preços
 
-# Endpoints Postos
+# Função utilitária para obter o próximo ID disponível em um banco de dados
 def get_next_id(db):
     return max([item.id for item in db], default=0) + 1
 
+# Endpoints CRUD para Postos
 @app.post("/postos", response_model=Posto)
 def create_posto(posto: Posto):
     posto.id = get_next_id(postos_db)
@@ -74,7 +79,7 @@ def delete_posto(posto_id: int):
             return {"detail": "Posto deletado"}
     raise HTTPException(status_code=404, detail="Posto não encontrado")
 
-# Endpoints Combustíveis
+# Endpoints CRUD para Combustíveis
 @app.post("/combustiveis", response_model=Combustivel)
 def create_combustivel(combustivel: Combustivel):
     combustivel.id = get_next_id(combustiveis_db)
@@ -109,7 +114,7 @@ def delete_combustivel(combustivel_id: int):
             return {"detail": "Combustível deletado"}
     raise HTTPException(status_code=404, detail="Combustível não encontrado")
 
-# Endpoints Usuários
+# Endpoints CRUD para Usuários
 @app.post("/usuarios", response_model=Usuario)
 def create_usuario(usuario: Usuario):
     usuario.id = get_next_id(usuarios_db)
@@ -144,7 +149,7 @@ def delete_usuario(usuario_id: int):
             return {"detail": "Usuário deletado"}
     raise HTTPException(status_code=404, detail="Usuário não encontrado")
 
-# Endpoints Registros de Preços
+# Endpoints CRUD para Registros de Preços
 @app.post("/registros_precos", response_model=RegistroPreco)
 def create_registro_preco(registro: RegistroPreco):
     registro.id = get_next_id(registros_precos_db)
