@@ -34,48 +34,61 @@ def carregar_tarefas():
         with open(ARQ_TAREFAS, "r", encoding="utf-8") as f:
             for linha in f:
                 if linha.strip():
-                    cod_tarefa, cod_desc, cod_prio = linha.strip().split("|")
+                    partes = linha.strip().split("|")
+                    if len(partes) == 4:
+                        cod_tarefa, cod_desc, cod_prio, concluida = partes
+                    else:
+                        cod_tarefa, cod_desc, cod_prio = partes
+                        concluida = "False"
                     tarefas.append({
                         "codigo": cod_tarefa,
                         "descricao": descricoes.get(cod_desc, f"[desc {cod_desc}]") ,
                         "prioridade": prioridades.get(cod_prio, f"[prio {cod_prio}]") ,
                         "cod_desc": cod_desc,
                         "cod_prio": cod_prio,
-                        "concluida": False  # Não há status de conclusão nos arquivos, default False
+                        "concluida": concluida == "True"
                     })
     return tarefas
 
 def salvar_tarefas(tarefas):
     with open(ARQ_TAREFAS, "w", encoding="utf-8") as f:
         for t in tarefas:
-            f.write(f"{t['codigo']}|{t['cod_desc']}|{t['cod_prio']}\n")
+            f.write(f"{t['codigo']}|{t['cod_desc']}|{t['cod_prio']}|{t['concluida']}\n")
+
+def salvar_descricoes(descricoes):
+    with open(ARQ_DESC, "w", encoding="utf-8") as f:
+        for cod, texto in descricoes.items():
+            f.write(f"{cod}|{texto}\n")
+
+def salvar_prioridades(prioridades):
+    with open(ARQ_PRIORIDADE, "w", encoding="utf-8") as f:
+        for cod, texto in prioridades.items():
+            f.write(f"{cod}|{texto}\n")
 
 def criar_tarefa(tarefas):
     descricoes = carregar_descricoes()
     prioridades = carregar_prioridades()
-    print("Descrições disponíveis:")
-    for cod, texto in descricoes.items():
-        print(f"{cod}: {texto}")
-    cod_desc = input("Código da descrição: ")
-    if cod_desc not in descricoes:
-        print("Código de descrição inválido.")
-        return
-    print("Prioridades disponíveis:")
-    for cod, texto in prioridades.items():
-        print(f"{cod}: {texto}")
-    cod_prio = input("Código da prioridade: ")
-    if cod_prio not in prioridades:
-        print("Código de prioridade inválido.")
-        return
-    novo_codigo = str(len(tarefas) + 1)
-    tarefas.append({
+    # Criar nova descrição
+    nova_desc = input("Digite a descrição da nova tarefa: ")
+    novo_cod_desc = str(max([int(c) for c in descricoes.keys()] + [0]) + 1)
+    descricoes[novo_cod_desc] = nova_desc
+    salvar_descricoes(descricoes)
+    # Criar nova prioridade
+    nova_prio = input("Digite o texto do novo tipo de prioridade: ")
+    novo_cod_prio = str(max([int(c) for c in prioridades.keys()] + [0]) + 1)
+    prioridades[novo_cod_prio] = nova_prio
+    salvar_prioridades(prioridades)
+    # Criar tarefa
+    novo_codigo = str(max([int(t['codigo']) for t in tarefas] + [0]) + 1)
+    tarefa = {
         "codigo": novo_codigo,
-        "descricao": descricoes[cod_desc],
-        "prioridade": prioridades[cod_prio],
-        "cod_desc": cod_desc,
-        "cod_prio": cod_prio,
+        "descricao": nova_desc,
+        "prioridade": nova_prio,
+        "cod_desc": novo_cod_desc,
+        "cod_prio": novo_cod_prio,
         "concluida": False
-    })
+    }
+    tarefas.append(tarefa)
     salvar_tarefas(tarefas)
     print("Tarefa criada!")
 
@@ -102,7 +115,8 @@ def marcar_concluida(tarefas):
     idx = int(input("Número da tarefa para marcar como concluída: ")) - 1
     if 0 <= idx < len(tarefas):
         tarefas[idx]["concluida"] = True
-        print("Tarefa marcada como concluída! (Obs: status não é salvo no arquivo)")
+        salvar_tarefas(tarefas)
+        print("Tarefa marcada como concluída!")
     else:
         print("Índice inválido.")
 
