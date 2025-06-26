@@ -1,6 +1,6 @@
 # Sistema de Reserva de Salas
 
-API REST para agendamento e gerenciamento de reservas de salas, desenvolvida com Fastify e Prisma.
+API REST para agendamento e gerenciamento de reservas de salas, desenvolvida com Fastify, Prisma e documentação automática via Swagger.
 
 ## Funcionalidades
 - Cadastro de salas
@@ -10,6 +10,7 @@ API REST para agendamento e gerenciamento de reservas de salas, desenvolvida com
 - Cadastro de reservas (associando sala e solicitante)
 - Listagem de reservas
 - Validação de conflitos de horário
+- Documentação automática da API em /docs
 
 ## Instalação
 
@@ -44,27 +45,31 @@ API REST para agendamento e gerenciamento de reservas de salas, desenvolvida com
 
 O servidor estará disponível em http://localhost:3000
 
+A documentação Swagger estará disponível em http://localhost:3000/docs
+
 ## Endpoints principais
 
+Todas as rotas estão sob o prefixo `/v1`.
+
 ### Salas
-- `POST /salas` — Cadastrar nova sala
-- `GET /salas` — Listar todas as salas
-- `GET /salas/:id` — Buscar sala por id
+- `POST /v1/salas` — Cadastrar nova sala
+- `GET /v1/salas` — Listar todas as salas
+- `GET /v1/salas/:id` — Buscar sala por id
 
 ### Solicitantes
-- `POST /solicitantes` — Cadastrar novo solicitante
-- `GET /solicitantes` — Listar todos os solicitantes
-- `GET /solicitantes/:id` — Buscar solicitante por id
+- `POST /v1/solicitantes` — Cadastrar novo solicitante
+- `GET /v1/solicitantes` — Listar todos os solicitantes
+- `GET /v1/solicitantes/:id` — Buscar solicitante por id
 
 ### Reservas
-- `POST /reservas` — Cadastrar nova reserva (com validação de conflito e associação a solicitante)
-- `GET /reservas` — Listar todas as reservas
-- `GET /reservas/:id` — Buscar reserva por id
+- `POST /v1/reservas` — Cadastrar nova reserva (com validação de conflito e associação a solicitante)
+- `GET /v1/reservas` — Listar todas as reservas
+- `GET /v1/reservas/:id` — Buscar reserva por id
 
 ## Exemplos de Requisições
 
 ### Criar Sala
-`POST /salas`
+`POST /v1/salas`
 ```json
 {
   "nome": "Sala de Reunião 1"
@@ -72,7 +77,7 @@ O servidor estará disponível em http://localhost:3000
 ```
 
 ### Criar Solicitante
-`POST /solicitantes`
+`POST /v1/solicitantes`
 ```json
 {
   "nome": "Maria Silva",
@@ -81,7 +86,7 @@ O servidor estará disponível em http://localhost:3000
 ```
 
 ### Criar Reserva
-`POST /reservas`
+`POST /v1/reservas`
 ```json
 {
   "salaId": 1,
