@@ -1,31 +1,61 @@
-# estrategia-treinamento-genai-pratica
+# My Food App
 
-A entrega do projeto deve ser enviada um Pull Request com o nome da Branch deve ser (nome 1)-(nome 2)-(tema projeto)
+## Requisitos
 
-Recomendamos que o projeto seja feita em dupla
+- PHP >= 8.1
+- Composer
+- MySQL ou outro banco de dados suportado
+- Node.js e npm (opcional, para frontend)
 
-TEMAS:
+## Passos para executar a aplicação
 
-## Agendamento de Consultas
--	Funcionalidade: cadastrar pacientes, profissionais e horários disponíveis.
--	Tópicos: CRUD, regras de horário, endpoint para listar agendamentos por data.
-## Cadastro de Produtos e Pedidos de Comida
--	Funcionalidade: cadastrar produtos, criar pedidos com múltiplos itens.
--	Tópicos: relacionamento 1-N (pedido-produtos), cálculo de total.
-## Controle de Tarefas (To-Do List) com Prioridade
--	Funcionalidade: criar tarefas, marcar como concluídas, filtrar por prioridade.
--	Tópicos: CRUD, enums, filtros
-## Sistema de Reservas de Salas
--	Funcionalidade: reservar salas por data e horário.
--	Tópicos: validação de conflito, visualização de agenda.
-## Controle de Estoque Simples
--	Funcionalidade: cadastrar itens, ajustar entradas e saídas.
--	Tópicos: operações de crédito/débito em quantidade
-## Controle de Empréstimo de Livros para Bibliotecas
--	Cadastrar livros, usuários e empréstimos.
--	Validar se o livro está disponível
--	Listar livros atrasados.
-## Agenda de Contatos Pessoais
--	Cadastrar nome, telefone, e-mail, observações.
--	Buscar por nome ou inicial.
+1. **Clone o repositório e acesse o diretório:**
+   ```bash
+   git clone <url-do-repositorio>
+   cd my-food-app
+   ```
 
+2. **Instale as dependências do PHP:**
+   ```bash
+   composer install
+   ```
+
+3. **Copie o arquivo de ambiente e configure:**
+   ```bash
+   cp .env.example .env
+   ```
+   Edite o arquivo `.env` e configure as variáveis de conexão com o banco de dados.
+
+4. **Gere a chave da aplicação:**
+   ```bash
+   php artisan key:generate
+   ```
+
+5. **Execute as migrations:**
+   ```bash
+   php artisan migrate
+   ```
+
+6. **(Opcional) Popule o banco com dados de exemplo:**
+   ```bash
+   php artisan db:seed
+   ```
+
+7. **Inicie o servidor de desenvolvimento:**
+   ```bash
+   php artisan serve
+   ```
+
+8. **Acesse a API:**
+   - As rotas da API estarão disponíveis em `http://localhost:8000/api/products`
+
+## Comandos úteis
+
+- Rodar testes: `php artisan test`
+- Gerar novas migrations: `php artisan make:migration <nome>`
+- Criar novo controller: `php artisan make:controller <NomeController>`
+
+## Observações
+
+- Para autenticação, consulte a documentação do Laravel Sanctum ou Passport.
+- Para mais informações, acesse a [documentação oficial do Laravel](https://laravel.com/docs).
