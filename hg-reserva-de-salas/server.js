@@ -11,13 +11,20 @@ db.serialize(() => {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL
   )`)
+  db.run(`CREATE TABLE IF NOT EXISTS solicitantes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    email TEXT NOT NULL
+  )`)
   db.run(`CREATE TABLE IF NOT EXISTS reservas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     salaId INTEGER NOT NULL,
+    solicitanteId INTEGER NOT NULL,
     data TEXT NOT NULL,
     horaInicio TEXT NOT NULL,
     horaFim TEXT NOT NULL,
-    FOREIGN KEY (salaId) REFERENCES salas(id)
+    FOREIGN KEY (salaId) REFERENCES salas(id),
+    FOREIGN KEY (solicitanteId) REFERENCES solicitantes(id)
   )`)
 })
 
@@ -51,9 +58,29 @@ fastify.get('/salas/:id', async (request, reply) => {
   })
 })
 
+// CRUD de Solicitantes
+fastify.post('/solicitantes', async (request, reply) => {
+  const { nome, email } = request.body
+  return new Promise((resolve, reject) => {
+    db.run('INSERT INTO solicitantes (nome, email) VALUES (?, ?)', [nome, email], function (err) {
+      if (err) return reject(reply.code(500).send({ error: 'Erro ao criar solicitante' }))
+      resolve({ id: this.lastID, nome, email })
+    })
+  })
+})
+
+fastify.get('/solicitantes', async () => {
+  return new Promise((resolve, reject) => {
+    db.all('SELECT * FROM solicitantes', [], (err, rows) => {
+      if (err) return reject([])
+      resolve(rows)
+    })
+  })
+})
+
 // CRUD de Reservas
 fastify.post('/reservas', async (request, reply) => {
-  const { salaId, data, horaInicio, horaFim } = request.body
+  const { salaId, solicitanteId, data, horaInicio, horaFim } = request.body
   // Validação de conflito
   return new Promise((resolve, reject) => {
     db.all(
@@ -67,11 +94,11 @@ fastify.post('/reservas', async (request, reply) => {
         if (err) return reject(reply.code(500).send({ error: 'Erro ao validar conflito' }))
         if (rows.length > 0) return reject(reply.code(400).send({ error: 'Conflito de horário' }))
         db.run(
-          'INSERT INTO reservas (salaId, data, horaInicio, horaFim) VALUES (?, ?, ?, ?)',
-          [salaId, data, horaInicio, horaFim],
+          'INSERT INTO reservas (salaId, solicitanteId, data, horaInicio, horaFim) VALUES (?, ?, ?, ?, ?)',
+          [salaId, solicitanteId, data, horaInicio, horaFim],
           function (err) {
             if (err) return reject(reply.code(500).send({ error: 'Erro ao criar reserva' }))
-            resolve({ id: this.lastID, salaId, data, horaInicio, horaFim })
+            resolve({ id: this.lastID, salaId, solicitanteId, data, horaInicio, horaFim })
           }
         )
       }

@@ -5,7 +5,9 @@ API REST para agendamento e gerenciamento de reservas de salas, desenvolvida com
 ## Funcionalidades
 - Cadastro de salas
 - Listagem de salas
-- Cadastro de reservas
+- Cadastro de solicitantes
+- Listagem de solicitantes
+- Cadastro de reservas (associando sala e solicitante)
 - Listagem de reservas
 - Validação de conflitos de horário
 
@@ -34,7 +36,9 @@ O servidor estará disponível em http://localhost:3000
 
 - `POST /salas` — Cadastrar nova sala
 - `GET /salas` — Listar todas as salas
-- `POST /reservas` — Cadastrar nova reserva (com validação de conflito)
+- `POST /solicitantes` — Cadastrar novo solicitante
+- `GET /solicitantes` — Listar todos os solicitantes
+- `POST /reservas` — Cadastrar nova reserva (com validação de conflito e associação a solicitante)
 - `GET /reservas` — Listar todas as reservas
 
 ## Exemplos de Requisições
@@ -47,11 +51,21 @@ O servidor estará disponível em http://localhost:3000
 }
 ```
 
+### Criar Solicitante
+`POST /solicitantes`
+```json
+{
+  "nome": "Maria Silva",
+  "email": "maria@email.com"
+}
+```
+
 ### Criar Reserva
 `POST /reservas`
 ```json
 {
   "salaId": 1,
+  "solicitanteId": 1,
   "data": "2024-06-10",
   "horaInicio": "09:00",
   "horaFim": "10:00"
@@ -60,4 +74,4 @@ O servidor estará disponível em http://localhost:3000
 
 ## Observação
 
-Os dados são armazenados em memória (não persistem após reiniciar o servidor).
+Os dados são armazenados em um banco SQLite local (db.sqlite). Cada reserva deve ser associada a um solicitante já cadastrado.
