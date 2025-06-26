@@ -127,6 +127,27 @@ def filtrar_por_prioridade(tarefas):
 def ordenar_por_prioridade(tarefas):
     listar_tarefas(tarefas, ordenar_por_prioridade=True)
 
+def excluir_tarefa(tarefas):
+    listar_tarefas(tarefas)
+    idx = int(input("Número da tarefa para excluir: ")) - 1
+    if 0 <= idx < len(tarefas):
+        tarefa = tarefas.pop(idx)
+        # Atualiza descrições
+        descricoes = carregar_descricoes()
+        if tarefa['cod_desc'] in descricoes:
+            del descricoes[tarefa['cod_desc']]
+            salvar_descricoes(descricoes)
+        # Atualiza prioridades
+        prioridades = carregar_prioridades()
+        if tarefa['cod_prio'] in prioridades:
+            del prioridades[tarefa['cod_prio']]
+            salvar_prioridades(prioridades)
+        # Atualiza tarefas
+        salvar_tarefas(tarefas)
+        print("Tarefa excluída!")
+    else:
+        print("Índice inválido.")
+
 def menu():
     tarefas = carregar_tarefas()
     while True:
@@ -135,7 +156,8 @@ def menu():
         print("3. Marcar tarefa como concluída")
         print("4. Filtrar por prioridade")
         print("5. Ordenar por prioridade")
-        print("6. Sair")
+        print("6. Excluir tarefa")
+        print("7. Sair")
         op = input("Escolha uma opção: ")
         if op == "1":
             criar_tarefa(tarefas)
@@ -148,6 +170,8 @@ def menu():
         elif op == "5":
             ordenar_por_prioridade(tarefas)
         elif op == "6":
+            excluir_tarefa(tarefas)
+        elif op == "7":
             break
         else:
             print("Opção inválida.")
