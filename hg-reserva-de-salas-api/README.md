@@ -1,6 +1,6 @@
 # Sistema de Reserva de Salas
 
-API REST para agendamento e gerenciamento de reservas de salas, desenvolvida com Fastify.
+API REST para agendamento e gerenciamento de reservas de salas, desenvolvida com Fastify e Prisma.
 
 ## Funcionalidades
 - Cadastro de salas
@@ -16,19 +16,32 @@ API REST para agendamento e gerenciamento de reservas de salas, desenvolvida com
 1. Certifique-se de ter o Node.js instalado.
 2. No terminal, acesse a pasta do projeto:
    ```bash
-   cd hg-reserva-de-salas
+   cd hg-reserva-de-salas-api
    ```
 3. Instale as dependências:
    ```bash
    npm install
    ```
 
+## Configuração do Banco de Dados
+
+1. Gere o banco de dados SQLite e o Prisma Client:
+   ```bash
+   npx prisma migrate dev --name init
+   npx prisma generate
+   ```
+   Isso criará o arquivo `prisma/dev.db` e aplicará o schema definido em `prisma/schema.prisma`.
+
 ## Como executar
 
-Inicie o servidor com:
-```bash
-npm start
-```
+1. Compile o projeto:
+   ```bash
+   npm run build
+   ```
+2. Inicie o servidor:
+   ```bash
+   npm start
+   ```
 
 O servidor estará disponível em http://localhost:3000
 
@@ -82,4 +95,4 @@ O servidor estará disponível em http://localhost:3000
 
 ## Observação
 
-Os dados são armazenados em um banco SQLite local (db.sqlite). Cada reserva deve ser associada a um solicitante já cadastrado.
+Os dados são armazenados em um banco SQLite local (`prisma/dev.db`). Cada reserva deve ser associada a um solicitante já cadastrado.
