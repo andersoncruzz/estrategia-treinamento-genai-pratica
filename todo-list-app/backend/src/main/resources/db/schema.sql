@@ -1,0 +1,10 @@
+-- schema.sql file for initializing the database schema
+
+CREATE TABLE tasks (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    status ENUM('PENDING', 'COMPLETED') NOT NULL DEFAULT 'PENDING',
+    priority ENUM('LOW', 'MEDIUM', 'HIGH') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
