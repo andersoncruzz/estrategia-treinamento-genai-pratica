@@ -78,6 +78,16 @@ fastify.get('/solicitantes', async () => {
   })
 })
 
+fastify.get('/solicitantes/:id', async (request, reply) => {
+  const id = Number(request.params.id)
+  return new Promise((resolve, reject) => {
+    db.get('SELECT * FROM solicitantes WHERE id = ?', [id], (err, row) => {
+      if (err || !row) return reject(reply.code(404).send({ error: 'Solicitante não encontrado' }))
+      resolve(row)
+    })
+  })
+})
+
 // CRUD de Reservas
 fastify.post('/reservas', async (request, reply) => {
   const { salaId, solicitanteId, data, horaInicio, horaFim } = request.body

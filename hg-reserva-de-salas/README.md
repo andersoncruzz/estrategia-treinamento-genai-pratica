@@ -34,12 +34,20 @@ O servidor estará disponível em http://localhost:3000
 
 ## Endpoints principais
 
+### Salas
 - `POST /salas` — Cadastrar nova sala
 - `GET /salas` — Listar todas as salas
+- `GET /salas/:id` — Buscar sala por id
+
+### Solicitantes
 - `POST /solicitantes` — Cadastrar novo solicitante
 - `GET /solicitantes` — Listar todos os solicitantes
+- `GET /solicitantes/:id` — Buscar solicitante por id
+
+### Reservas
 - `POST /reservas` — Cadastrar nova reserva (com validação de conflito e associação a solicitante)
 - `GET /reservas` — Listar todas as reservas
+- `GET /reservas/:id` — Buscar reserva por id
 
 ## Exemplos de Requisições
 
