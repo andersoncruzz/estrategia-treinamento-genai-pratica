@@ -1,5 +1,5 @@
 {
-  "name": "hg-reserva-de-salas",
+  "name": "hg-reserva-de-salas-api",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
