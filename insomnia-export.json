@@ -1,0 +1,163 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-06-25T00:00:00.000Z",
+  "__export_source": "insomnia.desktop:v2025.6.25",
+  "resources": [
+    {
+      "_id": "wrk_1",
+      "name": "Agendamento de Sala API",
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_1",
+      "parentId": "wrk_1",
+      "_type": "environment",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:8080"
+      }
+    },
+    {
+      "_id": "req_1",
+      "parentId": "wrk_1",
+      "_type": "request",
+      "name": "Listar Salas",
+      "method": "GET",
+      "url": "{{ base_url }}/salas",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_2",
+      "parentId": "wrk_1",
+      "_type": "request",
+      "name": "Criar Sala",
+      "method": "POST",
+      "url": "{{ base_url }}/salas",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Sala 101\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ]
+    },
+    {
+      "_id": "req_3",
+      "parentId": "wrk_1",
+      "_type": "request",
+      "name": "Listar Reservas",
+      "method": "GET",
+      "url": "{{ base_url }}/reservas",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_4",
+      "parentId": "wrk_1",
+      "_type": "request",
+      "name": "Criar Reserva",
+      "method": "POST",
+      "url": "{{ base_url }}/reservas",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"sala\": {\"id\": 1},\n  \"horarioDisponivel\": {\"id\": 1},\n  \"usuario\": \"João\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ]
+    },
+    {
+      "_id": "req_5",
+      "parentId": "wrk_1",
+      "_type": "request",
+      "name": "Listar Reservas por Sala",
+      "method": "GET",
+      "url": "{{ base_url }}/reservas/sala/Sala%20101",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_6",
+      "parentId": "wrk_1",
+      "_type": "request",
+      "name": "Listar Reservas por Horário Disponível",
+      "method": "GET",
+      "url": "{{ base_url }}/reservas/horario/1",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_7",
+      "parentId": "wrk_1",
+      "_type": "request",
+      "name": "Listar Reservas por Dia do Calendário",
+      "method": "GET",
+      "url": "{{ base_url }}/reservas/dia/1",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_8",
+      "parentId": "wrk_1",
+      "_type": "request",
+      "name": "Listar Dias do Calendário",
+      "method": "GET",
+      "url": "{{ base_url }}/dias",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_9",
+      "parentId": "wrk_1",
+      "_type": "request",
+      "name": "Criar Dia do Calendário",
+      "method": "POST",
+      "url": "{{ base_url }}/dias",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"data\": \"2025-06-26\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ]
+    },
+    {
+      "_id": "req_10",
+      "parentId": "wrk_1",
+      "_type": "request",
+      "name": "Listar Horários Disponíveis",
+      "method": "GET",
+      "url": "{{ base_url }}/horarios",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_11",
+      "parentId": "wrk_1",
+      "_type": "request",
+      "name": "Criar Horário Disponível",
+      "method": "POST",
+      "url": "{{ base_url }}/horarios",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"horario\": \"09:00:00\",\n  \"reservado\": false,\n  \"dia\": {\"id\": 1}\n}"
+      },
+      "parameters": [],
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ]
+    }
+  ]
+}
