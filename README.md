@@ -1,3 +1,8 @@
+# Para rodar a API, execute o comando abaixo no terminal:
+# uvicorn main:app --reload
+
+# A documentação interativa estará disponível em http://127.0.0.1:8000/docs
+
 # estrategia-treinamento-genai-pratica
 
 A entrega do projeto deve ser enviada um Pull Request com o nome da Branch deve ser (nome 1)-(nome 2)-(tema projeto)
