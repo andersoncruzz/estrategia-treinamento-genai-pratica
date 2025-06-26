@@ -27,8 +27,7 @@ API REST para agendamento e gerenciamento de reservas de salas, desenvolvida com
 
 1. Gere o banco de dados SQLite e o Prisma Client:
    ```bash
-   npx prisma migrate dev --name init
-   npx prisma generate
+   npm run prisma:db
    ```
    Isso criará o arquivo `prisma/dev.db` e aplicará o schema definido em `prisma/schema.prisma`.
 
