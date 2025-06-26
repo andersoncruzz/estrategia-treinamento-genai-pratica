@@ -1,0 +1,12 @@
+Comprar comida|alta|True
+Dormir|baixa|False
+Trabalhar|media|False
+Dirigir|baixa|False
+Ganhar dinheiro|alta|False
+Matar|baixa|False
+Fazer o número 2|alta|False
+Fazer o número 1|alta|False
+Andar|media|False
+Namorar|baixa|False
+Correr|baixa|False
+Dançar|baixa|False
