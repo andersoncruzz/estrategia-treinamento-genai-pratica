@@ -1,34 +1,81 @@
 import os
 
-ARQUIVO = "tarefas.txt"
-PRIORIDADES = ["alta", "media", "baixa"]
+ARQ_TAREFAS = "tarefas_todolist.txt"
+ARQ_DESC = "tipo_desc_tarefa.txt"
+ARQ_PRIORIDADE = "tipo_prioridade.txt"
+
+# Funções auxiliares para carregar os tipos
+
+def carregar_descricoes():
+    descricoes = {}
+    if os.path.exists(ARQ_DESC):
+        with open(ARQ_DESC, "r", encoding="utf-8") as f:
+            for linha in f:
+                if linha.strip():
+                    cod, texto = linha.strip().split("|", 1)
+                    descricoes[cod] = texto
+    return descricoes
+
+def carregar_prioridades():
+    prioridades = {}
+    if os.path.exists(ARQ_PRIORIDADE):
+        with open(ARQ_PRIORIDADE, "r", encoding="utf-8") as f:
+            for linha in f:
+                if linha.strip():
+                    cod, texto = linha.strip().split("|", 1)
+                    prioridades[cod] = texto
+    return prioridades
 
 def carregar_tarefas():
     tarefas = []
-    if os.path.exists(ARQUIVO):
-        with open(ARQUIVO, "r", encoding="utf-8") as f:
+    descricoes = carregar_descricoes()
+    prioridades = carregar_prioridades()
+    if os.path.exists(ARQ_TAREFAS):
+        with open(ARQ_TAREFAS, "r", encoding="utf-8") as f:
             for linha in f:
                 if linha.strip():
-                    desc, prioridade, concluida = linha.strip().split("|")
+                    cod_tarefa, cod_desc, cod_prio = linha.strip().split("|")
                     tarefas.append({
-                        "descricao": desc,
-                        "prioridade": prioridade,
-                        "concluida": concluida == "True"
+                        "codigo": cod_tarefa,
+                        "descricao": descricoes.get(cod_desc, f"[desc {cod_desc}]") ,
+                        "prioridade": prioridades.get(cod_prio, f"[prio {cod_prio}]") ,
+                        "cod_desc": cod_desc,
+                        "cod_prio": cod_prio,
+                        "concluida": False  # Não há status de conclusão nos arquivos, default False
                     })
     return tarefas
 
 def salvar_tarefas(tarefas):
-    with open(ARQUIVO, "w", encoding="utf-8") as f:
+    with open(ARQ_TAREFAS, "w", encoding="utf-8") as f:
         for t in tarefas:
-            f.write(f"{t['descricao']}|{t['prioridade']}|{t['concluida']}\n")
+            f.write(f"{t['codigo']}|{t['cod_desc']}|{t['cod_prio']}\n")
 
 def criar_tarefa(tarefas):
-    desc = input("Descrição da tarefa: ")
-    prioridade = input("Prioridade (alta/media/baixa): ").lower()
-    if prioridade not in PRIORIDADES:
-        print("Prioridade inválida.")
+    descricoes = carregar_descricoes()
+    prioridades = carregar_prioridades()
+    print("Descrições disponíveis:")
+    for cod, texto in descricoes.items():
+        print(f"{cod}: {texto}")
+    cod_desc = input("Código da descrição: ")
+    if cod_desc not in descricoes:
+        print("Código de descrição inválido.")
         return
-    tarefas.append({"descricao": desc, "prioridade": prioridade, "concluida": False})
+    print("Prioridades disponíveis:")
+    for cod, texto in prioridades.items():
+        print(f"{cod}: {texto}")
+    cod_prio = input("Código da prioridade: ")
+    if cod_prio not in prioridades:
+        print("Código de prioridade inválido.")
+        return
+    novo_codigo = str(len(tarefas) + 1)
+    tarefas.append({
+        "codigo": novo_codigo,
+        "descricao": descricoes[cod_desc],
+        "prioridade": prioridades[cod_prio],
+        "cod_desc": cod_desc,
+        "cod_prio": cod_prio,
+        "concluida": False
+    })
     salvar_tarefas(tarefas)
     print("Tarefa criada!")
 
@@ -36,12 +83,12 @@ def listar_tarefas(tarefas, prioridade=None, ordenar_por_prioridade=False):
     lista = tarefas.copy()
     if ordenar_por_prioridade:
         prioridade_ordem = {"alta": 0, "media": 1, "baixa": 2}
-        lista.sort(key=lambda t: prioridade_ordem.get(t["prioridade"], 3))
+        lista.sort(key=lambda t: prioridade_ordem.get(t["prioridade"].lower(), 3))
     print("\n{:<4} {:<40} {:<12} {:<12}".format("Nº", "Descrição", "Prioridade", "Status"))
     print("-" * 72)
     count = 0
     for i, t in enumerate(lista):
-        if prioridade and t["prioridade"] != prioridade:
+        if prioridade and t["prioridade"].lower() != prioridade:
             continue
         status = "Concluída" if t["concluida"] else "Pendente"
         print("{:<4} {:<40} {:<12} {:<12}".format(i+1, t['descricao'], t['prioridade'].capitalize(), status))
@@ -55,16 +102,12 @@ def marcar_concluida(tarefas):
     idx = int(input("Número da tarefa para marcar como concluída: ")) - 1
     if 0 <= idx < len(tarefas):
         tarefas[idx]["concluida"] = True
-        salvar_tarefas(tarefas)
-        print("Tarefa marcada como concluída!")
+        print("Tarefa marcada como concluída! (Obs: status não é salvo no arquivo)")
     else:
         print("Índice inválido.")
 
 def filtrar_por_prioridade(tarefas):
     prioridade = input("Filtrar por prioridade (alta/media/baixa): ").lower()
-    if prioridade not in PRIORIDADES:
-        print("Prioridade inválida.")
-        return
     listar_tarefas(tarefas, prioridade)
 
 def ordenar_por_prioridade(tarefas):
