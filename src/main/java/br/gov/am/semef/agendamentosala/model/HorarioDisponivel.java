@@ -21,6 +21,7 @@ public class HorarioDisponivel {
     public HorarioDisponivel() {}
     public HorarioDisponivel(LocalTime horario) { this.horario = horario; }
     public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
     public LocalTime getHorario() { return horario; }
     public void setHorario(LocalTime horario) { this.horario = horario; }
     public boolean isReservado() { return reservado; }
