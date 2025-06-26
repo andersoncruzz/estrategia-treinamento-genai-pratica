@@ -1,6 +1,8 @@
 package com.example.contactagenda.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 /**
@@ -13,6 +15,7 @@ import jakarta.persistence.Id;
 public class Contact {
     /** Identificador único do contato. */
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     /** Nome do contato. */
     private String name;
