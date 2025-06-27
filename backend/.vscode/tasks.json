@@ -1,0 +1,11 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Testar e Rodar API",
+            "type": "shell",
+            "command": "$env:PYTHONPATH = \"$PWD\"; pytest; uvicorn app.main:app --reload",
+            "problemMatcher": []
+        }
+    ]
+}
