@@ -44,7 +44,7 @@ export const MOCK_RESERVAS: Reserva[] = [
     id: "1",
     salaId: "1",
     solicitanteId: "1",
-    dataReserva: "2024-01-15",
+    dataReserva: new Date().toISOString().split("T")[0], // Data de hoje
     horaInicio: "09:00",
     horaFim: "11:00",
   },
@@ -52,7 +52,7 @@ export const MOCK_RESERVAS: Reserva[] = [
     id: "2",
     salaId: "2",
     solicitanteId: "2",
-    dataReserva: "2024-01-15",
+    dataReserva: new Date().toISOString().split("T")[0], // Data de hoje
     horaInicio: "14:00",
     horaFim: "16:00",
   },
@@ -60,7 +60,7 @@ export const MOCK_RESERVAS: Reserva[] = [
     id: "3",
     salaId: "3",
     solicitanteId: "3",
-    dataReserva: "2024-01-16",
+    dataReserva: new Date().toISOString().split("T")[0], // Data de hoje
     horaInicio: "10:30",
     horaFim: "12:00",
   },
@@ -68,7 +68,7 @@ export const MOCK_RESERVAS: Reserva[] = [
     id: "4",
     salaId: "4",
     solicitanteId: "4",
-    dataReserva: "2024-01-16",
+    dataReserva: new Date().toISOString().split("T")[0], // Data de hoje
     horaInicio: "15:30",
     horaFim: "17:00",
   },
@@ -76,7 +76,7 @@ export const MOCK_RESERVAS: Reserva[] = [
     id: "5",
     salaId: "1",
     solicitanteId: "5",
-    dataReserva: "2024-01-17",
+    dataReserva: new Date().toISOString().split("T")[0], // Data de hoje
     horaInicio: "13:00",
     horaFim: "14:30",
   },
@@ -84,7 +84,7 @@ export const MOCK_RESERVAS: Reserva[] = [
     id: "6",
     salaId: "2",
     solicitanteId: "6",
-    dataReserva: "2024-01-17",
+    dataReserva: new Date().toISOString().split("T")[0], // Data de hoje
     horaInicio: "08:30",
     horaFim: "09:30",
   },

@@ -159,7 +159,13 @@ export default function ReservasPage() {
       if (USE_MOCK_DATA) {
         console.log("🎭 Usando dados mock para reservas")
         await mockDelay()
-        setReservas(MOCK_RESERVAS)
+        // Garante que todos os mocks tenham o campo 'dataReserva'
+        setReservas(
+          MOCK_RESERVAS.map((r) => ({
+            ...r,
+            dataReserva: r.dataReserva,
+          }))
+        )
         return
       }
 
@@ -171,7 +177,13 @@ export default function ReservasPage() {
 
       const data = await response.json()
       console.log("🌐 Reservas carregadas da API:", data)
-      setReservas(Array.isArray(data) ? data : [])
+      // Garante que todos os dados tenham o campo 'dataReserva'
+      setReservas(
+        (Array.isArray(data) ? data : []).map((r) => ({
+          ...r,
+          dataReserva: r.dataReserva || r.data,
+        }))
+      )
     } catch (error) {
       console.error("❌ Erro ao buscar reservas:", error)
       setHasErrorReservas(true)
@@ -267,7 +279,15 @@ export default function ReservasPage() {
   }
 
   const formatarData = (data: string) => {
-    return new Date(data).toLocaleDateString("pt-BR")
+    if (!data) return ""
+    const [datePart] = data.split("T")
+    if (!datePart) return data
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(datePart)) return datePart
+    const [ano, mes, dia] = datePart.split("-")
+    if (ano && mes && dia) {
+      return `${dia.padStart(2, "0")}/${mes.padStart(2, "0")}/${ano}`
+    }
+    return data
   }
 
   const getNomeSala = (salaId: string) => {
@@ -554,7 +574,9 @@ export default function ReservasPage() {
                                 {getNomeSolicitante(reserva.solicitanteId)}
                               </div>
                             </TableCell>
-                            <TableCell className="text-system-secondary">{formatarData(reserva.dataReserva)}</TableCell>
+                            <TableCell className="text-system-secondary">
+                              {formatarData(reserva.dataReserva)}
+                            </TableCell>
                             <TableCell className="text-system-secondary">
                               <div className="flex items-center">
                                 <Clock className="w-4 h-4 mr-2 text-system-primary" />
