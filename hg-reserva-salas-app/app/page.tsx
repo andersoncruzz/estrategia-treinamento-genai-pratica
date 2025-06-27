@@ -1,6 +1,4 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Building, Users, Calendar, CalendarDays } from "lucide-react"
+import { Navigation } from "@/components/navigation"
 
 // Dados mock para demonstração
 const salasDisponiveis = [
@@ -104,55 +102,20 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-system-background">
-      {/* Barra de Título */}
-      <header className="bg-system-primary shadow-sm border-b border-system-secondary">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-white">Sistema de Reserva de Salas</h1>
-              <p className="text-system-secondary/80 text-sm mt-1">Gerencie salas, solicitantes e reservas</p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" asChild className="text-white hover:bg-white/10 bg-white/10">
-                <Link href="/">
-                  <CalendarDays className="w-4 h-4 mr-2" />
-                  Calendário
-                </Link>
-              </Button>
-              <Button variant="ghost" asChild className="text-white hover:bg-white/10">
-                <Link href="/salas">
-                  <Building className="w-4 h-4 mr-2" />
-                  Salas
-                </Link>
-              </Button>
-              <Button variant="ghost" asChild className="text-white hover:bg-white/10">
-                <Link href="/solicitantes">
-                  <Users className="w-4 h-4 mr-2" />
-                  Solicitantes
-                </Link>
-              </Button>
-              <Button variant="ghost" asChild className="text-white hover:bg-white/10">
-                <Link href="/reservas">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  Reservas
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Navegação Responsiva */}
+      <Navigation />
 
       {/* Conteúdo Principal */}
-      <main className="max-w-7xl mx-auto p-6">
+      <main className="max-w-7xl mx-auto p-4 sm:p-6">
         {/* Calendário de Reservas */}
         <div>
-          <h2 className="text-2xl font-bold text-system-dark mb-4">Calendário de Reservas</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-system-dark mb-4">Calendário de Reservas</h2>
           <div className="bg-system-surface rounded-lg shadow-sm border border-system-secondary overflow-hidden">
             <div className="flex">
               {/* Primeira coluna fixa */}
               <div className="flex-shrink-0">
                 {/* Header da primeira coluna */}
-                <div className="w-[200px] px-4 py-3 text-left font-semibold text-system-dark bg-system-secondary border-b border-r border-system-primary h-[60px] flex items-center">
+                <div className="w-[150px] sm:w-[200px] px-2 sm:px-4 py-3 text-left font-semibold text-system-dark bg-system-secondary border-b border-r border-system-primary h-[60px] flex items-center text-sm sm:text-base">
                   {dataAtual}
                 </div>
                 {/* Linhas da primeira coluna */}
@@ -160,9 +123,9 @@ export default function HomePage() {
                   {salasDisponiveis.map((sala) => (
                     <div
                       key={sala.id}
-                      className="w-[200px] px-4 py-3 font-medium text-system-dark border-r border-system-primary flex items-center h-[60px] bg-system-surface hover:bg-system-background transition-colors"
+                      className="w-[150px] sm:w-[200px] px-2 sm:px-4 py-3 font-medium text-system-dark border-r border-system-primary flex items-center h-[60px] bg-system-surface hover:bg-system-background transition-colors text-sm sm:text-base"
                     >
-                      {sala.nome}
+                      <span className="truncate">{sala.nome}</span>
                     </div>
                   ))}
                 </div>
@@ -175,7 +138,7 @@ export default function HomePage() {
                   <div
                     className="grid gap-0 border-l border-system-secondary"
                     style={{
-                      gridTemplateColumns: `repeat(${horarios.length}, 80px)`,
+                      gridTemplateColumns: `repeat(${horarios.length}, 60px)`,
                       gridTemplateRows: `60px repeat(${salasDisponiveis.length}, 60px)`,
                     }}
                   >
@@ -183,7 +146,7 @@ export default function HomePage() {
                     {horarios.map((horario, index) => (
                       <div
                         key={horario}
-                        className="px-2 py-3 text-center font-semibold text-system-dark bg-system-secondary border-b border-r border-system-primary flex items-center justify-center text-xs"
+                        className="px-1 sm:px-2 py-3 text-center font-semibold text-system-dark bg-system-secondary border-b border-r border-system-primary flex items-center justify-center text-xs"
                         style={{ gridColumn: index + 1, gridRow: 1 }}
                       >
                         {horario}
@@ -213,7 +176,7 @@ export default function HomePage() {
                       return (
                         <div
                           key={reserva.id}
-                          className="bg-system-primary text-white px-2 py-2 rounded-md text-xs font-medium flex items-center justify-center m-1 shadow-sm hover:bg-system-primary/90 transition-colors cursor-pointer"
+                          className="bg-system-primary text-white px-1 sm:px-2 py-2 rounded-md text-xs font-medium flex items-center justify-center m-1 shadow-sm hover:bg-system-primary/90 transition-colors cursor-pointer"
                           style={{
                             gridColumnStart: startCol,
                             gridColumnEnd: endCol,
@@ -221,7 +184,9 @@ export default function HomePage() {
                           }}
                           title={`${reserva.solicitante} - ${reserva.horaInicio} às ${reserva.horaFim}`}
                         >
-                          <span className="truncate">{reserva.solicitante}</span>
+                          <span className="truncate text-center leading-tight">
+                            {reserva.solicitante.split(" ")[0]}
+                          </span>
                         </div>
                       )
                     })}
@@ -247,7 +212,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="mt-2 text-sm text-system-primary flex items-center gap-4">
+          <div className="mt-2 text-sm text-system-primary flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 bg-system-primary rounded"></div>
               <span>Reservado</span>
