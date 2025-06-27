@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Users, User, Phone, Mail, Edit, Trash2, Plus, Search } from "lucide-react"
 import { deleteContact, getContacts, updateContact } from "./contact-api"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { useRouter } from "next/navigation"
 
 
 export default function AllContacts() {
@@ -22,6 +23,8 @@ export default function AllContacts() {
 	const [editError, setEditError] = useState("")
 
 	const [alert, setAlert] = useState<{ type: 'success' | 'error' | 'info' | null, message: string }>({ type: null, message: "" })
+
+	const router = useRouter()
 
 	useEffect(() => {
 		async function fetchContacts() {
@@ -104,6 +107,10 @@ export default function AllContacts() {
 								</CardTitle>
 								<CardDescription>Gerencie todos os seus contatos em um só lugar</CardDescription>
 							</div>
+							<Button className="flex items-center gap-2" onClick={() => router.push("/novo-contato") }>
+								<Plus className="h-4 w-4" />
+								Novo Contato
+							</Button>
 						</div>
 					</CardHeader>
 					<CardContent>

@@ -28,6 +28,9 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <Navbar />
           {children}
+          <footer className="w-full text-center py-4 bg-gray-100 text-gray-700 text-sm border-t mt-8">
+            Curso: [I.A] Generativa para DevOps: aumentando a produtividade de desenvolvedores de software
+          </footer>
           <Toaster />
         </ThemeProvider>
       </body>
