@@ -6,7 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Users, User, Phone, Mail, Edit, Trash2, Plus, Search } from "lucide-react"
-import { deleteContact, getContacts } from "./contact-api"
+import { deleteContact, getContacts, updateContact } from "./contact-api"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 
 export default function AllContacts() {
@@ -14,6 +15,11 @@ export default function AllContacts() {
 	const [contacts, setContacts] = useState<any[]>([])
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState("")
+
+	const [editContact, setEditContact] = useState<any | null>(null)
+	const [editForm, setEditForm] = useState({ name: "", phone: "", email: "", notes: "" })
+	const [editLoading, setEditLoading] = useState(false)
+	const [editError, setEditError] = useState("")
 
 	useEffect(() => {
 		async function fetchContacts() {
@@ -47,6 +53,39 @@ export default function AllContacts() {
 			contact.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			contact.phone.includes(searchTerm),
 	)
+
+	const openEdit = (contact: any) => {
+		setEditContact(contact)
+		setEditForm({
+			name: contact.name,
+			phone: contact.phone,
+			email: contact.email,
+			notes: contact.notes || ""
+		})
+	}
+
+	const closeEdit = () => {
+		setEditContact(null)
+		setEditError("")
+	}
+
+	const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+		setEditForm({ ...editForm, [e.target.name]: e.target.value })
+	}
+
+	const handleEditSave = async () => {
+		setEditLoading(true)
+		setEditError("")
+		try {
+			await updateContact(editContact.id, editForm)
+			setContacts((prev) => prev.map((c) => c.id === editContact.id ? { ...c, ...editForm } : c))
+			closeEdit()
+		} catch {
+			setEditError("Erro ao salvar contato.")
+		} finally {
+			setEditLoading(false)
+		}
+	}
 
 	return (
 		<div className="bg-gray-50 p-4 min-h-[calc(100vh-4rem)]">
@@ -96,7 +135,7 @@ export default function AllContacts() {
 											</div>
 										</div>
 										<div className="flex gap-1">
-											<Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+											<Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => openEdit(contact)}>
 												<Edit className="h-4 w-4" />
 											</Button>
 											<Button
@@ -156,6 +195,37 @@ export default function AllContacts() {
 						</CardContent>
 					</Card>
 				)}
+
+				<Dialog open={!!editContact} onOpenChange={closeEdit}>
+					<DialogContent className="max-w-md mx-auto">
+						<DialogHeader>
+							<DialogTitle>Editar Contato</DialogTitle>
+						</DialogHeader>
+						<form className="space-y-4" onSubmit={e => { e.preventDefault(); handleEditSave(); }}>
+							<div className="space-y-2">
+								<label className="block font-medium">Nome</label>
+								<input name="name" value={editForm.name} onChange={handleEditChange} className="w-full border rounded px-2 py-1" required />
+							</div>
+							<div className="space-y-2">
+								<label className="block font-medium">Telefone</label>
+								<input name="phone" value={editForm.phone} onChange={handleEditChange} className="w-full border rounded px-2 py-1" required />
+							</div>
+							<div className="space-y-2">
+								<label className="block font-medium">E-mail</label>
+								<input name="email" value={editForm.email} onChange={handleEditChange} className="w-full border rounded px-2 py-1" required />
+							</div>
+							<div className="space-y-2">
+								<label className="block font-medium">Observações</label>
+								<textarea name="notes" value={editForm.notes} onChange={handleEditChange} className="w-full border rounded px-2 py-1 min-h-[60px]" />
+							</div>
+							{editError && <div className="text-red-500 text-sm">{editError}</div>}
+							<div className="flex gap-3 pt-2">
+								<Button type="button" variant="outline" className="flex-1" onClick={closeEdit} disabled={editLoading}>Cancelar</Button>
+								<Button type="submit" className="flex-1" disabled={editLoading}>{editLoading ? "Salvando..." : "Salvar"}</Button>
+							</div>
+						</form>
+					</DialogContent>
+				</Dialog>
 			</div>
 		</div>
 	)

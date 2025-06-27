@@ -33,4 +33,14 @@ public class ContactService {
     public void deleteContact(Long id) {
         contactRepository.deleteById(id);
     }
+
+    public Contact updateContact(Long id, Contact contact) {
+        Contact existing = contactRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Contato não encontrado"));
+        existing.setName(contact.getName());
+        existing.setPhone(contact.getPhone());
+        existing.setEmail(contact.getEmail());
+        existing.setNotes(contact.getNotes());
+        return contactRepository.save(existing);
+    }
 }

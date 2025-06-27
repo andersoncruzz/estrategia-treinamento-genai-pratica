@@ -68,4 +68,17 @@ public class ContactController {
         contactService.deleteContact(id);
         return ResponseEntity.noContent().build();
     }
+
+    /**
+     * Handles HTTP PUT requests to update a contact by ID.
+     *
+     * @param id the ID of the contact to be updated
+     * @param contact the updated contact data
+     * @return a ResponseEntity containing the updated contact
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<Contact> updateContact(@PathVariable Long id, @RequestBody Contact contact) {
+        Contact updated = contactService.updateContact(id, contact);
+        return ResponseEntity.ok(updated);
+    }
 }

@@ -49,3 +49,17 @@ export async function deleteContact(id: number) {
     throw new Error('Erro ao deletar contato');
   }
 }
+
+export async function updateContact(id: number, contact: { name: string; phone: string; email: string; notes?: string }) {
+  const response = await fetch(`http://localhost:8080/api/contacts/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(contact),
+  });
+  if (!response.ok) {
+    throw new Error('Erro ao atualizar contato');
+  }
+  return response.json();
+}
