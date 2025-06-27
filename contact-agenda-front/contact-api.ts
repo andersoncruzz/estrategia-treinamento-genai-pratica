@@ -40,3 +40,12 @@ export async function getContacts() {
 
   return response.json();
 }
+
+export async function deleteContact(id: number) {
+  const response = await fetch(`http://localhost:8080/api/contacts/${id}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error('Erro ao deletar contato');
+  }
+}

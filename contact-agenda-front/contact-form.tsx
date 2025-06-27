@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { User, Phone, Mail, FileText } from "lucide-react"
 import { useState } from "react"
 import { createContact } from "./contact-api"
+import { useRouter } from "next/navigation"
 
 export default function Component() {
   const [name, setName] = useState("")
@@ -16,6 +17,7 @@ export default function Component() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -29,6 +31,9 @@ export default function Component() {
       setPhone("")
       setEmail("")
       setNotes("")
+      setTimeout(() => {
+        router.push("/contacts")
+      }, 1000)
     } catch (err) {
       setError("Erro ao cadastrar contato.")
     } finally {

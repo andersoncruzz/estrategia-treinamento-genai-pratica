@@ -29,4 +29,8 @@ public class ContactService {
     public List<Contact> searchContactsByName(String name) {
         return contactRepository.findByNameContainingIgnoreCase(name);
     }
+
+    public void deleteContact(Long id) {
+        contactRepository.deleteById(id);
+    }
 }

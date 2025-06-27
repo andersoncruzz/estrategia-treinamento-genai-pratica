@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Users, User, Phone, Mail, Edit, Trash2, Plus, Search } from "lucide-react"
-import { getContacts } from "./contact-api"
+import { deleteContact, getContacts } from "./contact-api"
 
 
 export default function AllContacts() {
@@ -30,6 +30,16 @@ export default function AllContacts() {
 		}
 		fetchContacts()
 	}, [])
+
+	const handleDelete = async (id: number) => {
+		if (!window.confirm("Tem certeza que deseja remover este contato?")) return;
+		try {
+			await deleteContact(id);
+			setContacts((prev) => prev.filter((c) => c.id !== id));
+		} catch {
+			alert("Erro ao deletar contato.");
+		}
+	};
 
 	const filteredContacts = contacts.filter(
 		(contact) =>
@@ -93,6 +103,7 @@ export default function AllContacts() {
 												variant="ghost"
 												size="sm"
 												className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
+												onClick={() => handleDelete(contact.id)}
 											>
 												<Trash2 className="h-4 w-4" />
 											</Button>
@@ -142,10 +153,6 @@ export default function AllContacts() {
 							<Users className="h-16 w-16 mx-auto text-gray-400 mb-4" />
 							<h3 className="text-lg font-semibold mb-2">Nenhum contato cadastrado</h3>
 							<p className="text-gray-500 mb-4">Comece adicionando seu primeiro contato à agenda</p>
-							<Button className="flex items-center gap-2">
-								<Plus className="h-4 w-4" />
-								Adicionar Primeiro Contato
-							</Button>
 						</CardContent>
 					</Card>
 				)}

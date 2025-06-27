@@ -56,4 +56,16 @@ public class ContactController {
         List<Contact> contacts = contactService.getAllContacts();
         return ResponseEntity.ok(contacts);
     }
+
+    /**
+     * Handles HTTP DELETE requests to remove a contact by ID.
+     *
+     * @param id the ID of the contact to be removed
+     * @return a ResponseEntity with no content if successful
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteContact(@PathVariable Long id) {
+        contactService.deleteContact(id);
+        return ResponseEntity.noContent().build();
+    }
 }
