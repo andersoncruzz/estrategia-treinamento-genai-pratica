@@ -21,6 +21,8 @@ export default function AllContacts() {
 	const [editLoading, setEditLoading] = useState(false)
 	const [editError, setEditError] = useState("")
 
+	const [alert, setAlert] = useState<{ type: 'success' | 'error' | 'info' | null, message: string }>({ type: null, message: "" })
+
 	useEffect(() => {
 		async function fetchContacts() {
 			setLoading(true)
@@ -42,6 +44,7 @@ export default function AllContacts() {
 		try {
 			await deleteContact(id);
 			setContacts((prev) => prev.filter((c) => c.id !== id));
+			setAlert({ type: 'error', message: 'Contato removido!' })
 		} catch {
 			alert("Erro ao deletar contato.");
 		}
@@ -79,6 +82,7 @@ export default function AllContacts() {
 		try {
 			await updateContact(editContact.id, editForm)
 			setContacts((prev) => prev.map((c) => c.id === editContact.id ? { ...c, ...editForm } : c))
+			setAlert({ type: 'info', message: 'Contato atualizado!' })
 			closeEdit()
 		} catch {
 			setEditError("Erro ao salvar contato.")
@@ -119,6 +123,22 @@ export default function AllContacts() {
 						</div>
 					</CardContent>
 				</Card>
+
+				{/* Exemplo de alerta visual */}
+				{alert.type && (
+					<div className={`mb-4 px-4 py-2 rounded text-white text-center font-semibold flex items-center justify-between max-w-2xl mx-auto ${
+						alert.type === 'success' ? 'bg-green-600' : alert.type === 'error' ? 'bg-red-600' : 'bg-blue-600'
+					}`}>
+						<span>{alert.message}</span>
+						<button
+							onClick={() => setAlert({ type: null, message: "" })}
+							className="ml-4 text-white font-bold px-2 py-0.5 rounded hover:bg-white/20 focus:outline-none"
+							aria-label="Fechar alerta"
+						>
+							×
+						</button>
+					</div>
+				)}
 
 				<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 					{filteredContacts.map((contact) => (
