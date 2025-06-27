@@ -33,6 +33,7 @@ public class TaskService {
         Task task = taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Task not found"));
         task.setTaskName(taskDetails.getTaskName());
         task.setPriority(taskDetails.getPriority());
+        task.setStatus(taskDetails.getStatus()); // Adiciona atualização do status
         return Optional.of(taskRepository.save(task));
     }
 
