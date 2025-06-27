@@ -363,7 +363,7 @@ export default function ReservasPage() {
                       </SelectTrigger>
                       <SelectContent>
                         {salas.map((sala) => (
-                          <SelectItem key={sala.id} value={sala.id}>
+                          <SelectItem key={String(sala.id)} value={String(sala.id)}>
                             {sala.nome}
                           </SelectItem>
                         ))}
@@ -403,7 +403,7 @@ export default function ReservasPage() {
                       </SelectTrigger>
                       <SelectContent>
                         {solicitantes.map((solicitante) => (
-                          <SelectItem key={solicitante.id} value={solicitante.id}>
+                          <SelectItem key={String(solicitante.id)} value={String(solicitante.id)}>
                             {solicitante.nome} ({solicitante.email})
                           </SelectItem>
                         ))}
