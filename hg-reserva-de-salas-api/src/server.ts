@@ -2,9 +2,15 @@ import fastify from 'fastify';
 import { PrismaClient } from '@prisma/client';
 import swagger from '@fastify/swagger';
 import swaggerUI from '@fastify/swagger-ui';
+import cors from '@fastify/cors';
 
 const app = fastify({ logger: true });
 const prisma = new PrismaClient();
+
+// Habilita CORS para todas as origens
+await app.register(cors, {
+  origin: true
+});
 
 // Swagger setup
 await app.register(swagger, {
