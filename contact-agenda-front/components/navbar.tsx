@@ -15,12 +15,12 @@ const navigation = [
     icon: Plus,
     description: "Adicionar novo contato",
   },
-  {
-    name: "Pesquisar",
-    href: "/search",
-    icon: Search,
-    description: "Buscar contatos por nome",
-  },
+  // {
+  //   name: "Pesquisar",
+  //   href: "/search",
+  //   icon: Search,
+  //   description: "Buscar contatos por nome",
+  // },
   {
     name: "Todos os Contatos",
     href: "/contacts",
