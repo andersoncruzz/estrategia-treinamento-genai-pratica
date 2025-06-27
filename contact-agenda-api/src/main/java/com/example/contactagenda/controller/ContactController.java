@@ -81,4 +81,16 @@ public class ContactController {
         Contact updated = contactService.updateContact(id, contact);
         return ResponseEntity.ok(updated);
     }
+    /**
+     * Handles HTTP GET requests to retrieve a contact by ID.
+     *
+     * @param id the ID of the contact to be retrieved
+     * @return a ResponseEntity containing the contact if found, or not found status if not
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Contact> getContactById(@PathVariable Long id) {
+        return contactService.getContactById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }     
 }

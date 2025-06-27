@@ -13,9 +13,12 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.List;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 public class ContactControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -64,5 +67,42 @@ public class ContactControllerTest {
                 .param("name", "John"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("John Doe"));
+    }
+
+    @Test
+    void testUpdateContact() throws Exception {
+        // Adiciona um contato
+        String response = mockMvc.perform(post("/api/contacts")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(contact)))
+            .andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString();
+
+        Long id = objectMapper.readTree(response).get("id").asLong();
+
+        // Atualiza o contato
+        contact.setName("John Updated");
+        mockMvc.perform(put("/api/contacts/" + id)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(contact)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name").value("John Updated"));
+    }
+
+    @Test
+    void testDeleteContact() throws Exception {
+        // Adiciona um contato
+        mockMvc.perform(post("/api/contacts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(contact)))
+                .andExpect(status().isOk());
+
+        // Remove o contato
+        mockMvc.perform(delete("/api/contacts/1"))
+                .andExpect(status().isNoContent());
+
+        // Verifica que não existe mais
+        mockMvc.perform(get("/api/contacts/1"))
+                .andExpect(status().isNotFound());
     }
 }
