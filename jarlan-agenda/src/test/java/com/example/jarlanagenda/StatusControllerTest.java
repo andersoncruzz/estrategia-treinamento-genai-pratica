@@ -16,6 +16,6 @@ class StatusControllerTest {
     @Test
     void statusEndpointReturnsHelloWorld() {
         ResponseEntity<String> response = restTemplate.getForEntity("/status", String.class);
-        assertThat(response.getBody()).isEqualTo("hello world");
+        assertThat(response.getBody()).isEqualTo("Hello World!!!");
     }
 }

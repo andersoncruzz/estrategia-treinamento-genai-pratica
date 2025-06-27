@@ -1,0 +1,3 @@
+2025-06-26 21:16:19.806495-04:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CONTATOS" not found; SQL statement:
+select * from contatos [42102-224]

@@ -1,4 +1,4 @@
-package agenda;
+package com.agenda;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,4 +18,6 @@ class StatusControllerTest {
         ResponseEntity<String> response = restTemplate.getForEntity("/status", String.class);
         assertThat(response.getBody()).isEqualTo("Hello World!!!");
     }
+
+
 }

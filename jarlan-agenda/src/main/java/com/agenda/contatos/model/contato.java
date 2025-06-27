@@ -1,16 +1,28 @@
 package com.agenda.contatos.model;
 
-public class contato {
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
+public class Contato {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
     private String email;
     private String telefone;
+    private String observacao;
 
-    public contato(Long id, String nome, String email, String telefone) {
+    public Contato() {}
+
+    public Contato(Long id, String nome, String email, String telefone, String observacao) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.telefone = telefone;
+        this.observacao = observacao;
     }
 
     public Long getId() {
@@ -43,5 +55,13 @@ public class contato {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public String getObservacao() {
+        return observacao;
+    }
+
+    public void setObservacao(String observacao) {
+        this.observacao = observacao;
     }
 }
