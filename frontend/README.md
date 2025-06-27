@@ -41,10 +41,18 @@ Este projeto é uma aplicação frontend desenvolvida com o objetivo de gerencia
 - `next`
 - `react`
 - `react-dom`
+- `typescript`
 - `tailwindcss`
 - `postcss`
 - `autoprefixer`
 - `@headlessui/react` (opcional, para componentes acessíveis)
+- `@heroicons/react` (ícones SVG para React)
+- `clsx` (utilitário para manipulação de classes CSS)
+- `lucide-react` (biblioteca de ícones)
+- `zod` (validação de schemas)
+- `react-hook-form` (gerenciamento de formulários)
+- `@tanstack/react-table` (tabelas avançadas)
+- `@tanstack/react-query` (gerenciamento de dados assíncronos)
 - Outras dependências podem ser consultadas no `package.json`.
 
 ## Instruções de Instalação e Execução
@@ -56,19 +64,20 @@ Este projeto é uma aplicação frontend desenvolvida com o objetivo de gerencia
    ```
 2. **Instale as dependências:**
    ```sh
-   pnpm install
+   yarn install
    ```
 3. **Execute o projeto em modo desenvolvimento:**
    ```sh
-   pnpm dev
+   yarn dev
    ```
    O projeto estará disponível em `http://localhost:3000`.
 
 4. **Build para produção:**
    ```sh
-   pnpm build
-   pnpm start
+   yarn build
+   yarn start
    ```
+
 
 ## Observações
 
