@@ -6,7 +6,7 @@ Recomendamos que o projeto seja feita em dupla
 
 TEMAS:
 
-## Agendamento de Consultas
+## Agendamento de Consulta
 -	Funcionalidade: cadastrar pacientes, profissionais e horários disponíveis.
 -	Tópicos: CRUD, regras de horário, endpoint para listar agendamentos por data.
 ## Cadastro de Produtos e Pedidos de Comida
