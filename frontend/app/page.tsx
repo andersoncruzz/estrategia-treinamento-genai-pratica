@@ -26,10 +26,10 @@ interface Product {
   descricao: string
   preco: number
   categoria: string
-  imagem: string
+  imagem_url: string
   disponivel: boolean
-  quantidade: number
-  dataCriacao: string
+  quantidade_estoque: number
+  created_at: string
 }
 
 const CATEGORIAS = [
@@ -54,21 +54,29 @@ export default function ProductManagement() {
     categoria: "",
     imagem: "",
     disponivel: true,
-    quantidade: "",
+    quantidade_estoque: "",
   })
 
-  // Carregar produtos do localStorage
+  // Carregar produtos da API
   useEffect(() => {
-    const savedProducts = localStorage.getItem("food-products")
-    if (savedProducts) {
-      setProducts(JSON.parse(savedProducts))
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/api/products", {
+          headers: { "Accept": "application/json" }
+        })
+        if (!response.ok) throw new Error("Erro ao buscar produtos")
+        const data = await response.json()
+        setProducts(data)
+      } catch (error) {
+        toast({
+          title: "Erro",
+          description: "Falha ao buscar produtos da API",
+          variant: "destructive",
+        })
+      }
     }
+    fetchProducts()
   }, [])
-
-  // Salvar produtos no localStorage
-  useEffect(() => {
-    localStorage.setItem("food-products", JSON.stringify(products))
-  }, [products])
 
   const resetForm = () => {
     setFormData({
@@ -78,12 +86,12 @@ export default function ProductManagement() {
       categoria: "",
       imagem: "",
       disponivel: true,
-      quantidade: "",
+      quantidade_estoque: "",
     })
     setEditingProduct(null)
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Validações
     if (!formData.titulo.trim()) {
       toast({
@@ -112,7 +120,7 @@ export default function ProductManagement() {
       return
     }
 
-    if (!formData.quantidade || Number.parseInt(formData.quantidade) < 0) {
+    if (!formData.quantidade_estoque || Number.parseInt(formData.quantidade_estoque) < 0) {
       toast({
         title: "Erro",
         description: "Quantidade deve ser um número válido",
@@ -127,26 +135,68 @@ export default function ProductManagement() {
       descricao: formData.descricao.trim(),
       preco: Number.parseFloat(formData.preco),
       categoria: formData.categoria,
-      imagem: formData.imagem || "/placeholder.svg?height=200&width=200",
+      imagem_url: formData.imagem || "/placeholder.svg?height=200&width=200",
       disponivel: formData.disponivel,
-      quantidade: Number.parseInt(formData.quantidade),
-      dataCriacao: editingProduct?.dataCriacao || new Date().toISOString(),
+      quantidade_estoque: Number.parseInt(formData.quantidade_estoque),
+      created_at: editingProduct?.created_at || new Date().toISOString(),
     }
 
     if (editingProduct) {
-      // Editar produto existente
-      setProducts(products.map((p) => (p.id === editingProduct.id ? productData : p)))
-      toast({
-        title: "Sucesso",
-        description: "Produto atualizado com sucesso!",
-      })
+      // Editar produto existente via API
+      try {
+        const response = await fetch(`http://localhost:8000/api/products/${editingProduct.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(productData),
+        })
+        if (!response.ok) {
+          throw new Error("Erro ao atualizar produto")
+        }
+        const updatedProduct = await response.json()
+        setProducts(products.map((p) => (p.id === editingProduct.id ? updatedProduct : p)))
+        toast({
+          title: "Sucesso",
+          description: "Produto atualizado com sucesso!",
+        })
+      } catch (error) {
+        toast({
+          title: "Erro",
+          description: "Falha ao atualizar produto na API",
+          variant: "destructive",
+        })
+        return
+      }
     } else {
-      // Adicionar novo produto
-      setProducts([productData, ...products])
-      toast({
-        title: "Sucesso",
-        description: "Produto cadastrado com sucesso!",
-      })
+      // Adicionar novo produto via API
+      try {
+        const response = await fetch("http://localhost:8000/api/products", {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(productData),
+        })
+        if (!response.ok) {
+          throw new Error("Erro ao cadastrar produto")
+        }
+        const createdProduct = await response.json()
+        setProducts([createdProduct, ...products])
+        toast({
+          title: "Sucesso",
+          description: "Produto cadastrado com sucesso!",
+        })
+      } catch (error) {
+        toast({
+          title: "Erro",
+          description: "Falha ao cadastrar produto na API",
+          variant: "destructive",
+        })
+        return
+      }
     }
 
     resetForm()
@@ -160,19 +210,39 @@ export default function ProductManagement() {
       descricao: product.descricao,
       preco: product.preco.toString(),
       categoria: product.categoria,
-      imagem: product.imagem,
+      imagem: product.imagem_url,
       disponivel: product.disponivel,
-      quantidade: product.quantidade.toString(),
+      quantidade_estoque: product.quantidade_estoque.toString(),
     })
     setIsDialogOpen(true)
   }
 
-  const handleDelete = (productId: string) => {
-    setProducts(products.filter((p) => p.id !== productId))
-    toast({
-      title: "Produto removido",
-      description: "Produto foi removido com sucesso",
-    })
+  const handleDelete = async (productId: string) => {
+    const confirmDelete = window.confirm("Tem certeza que deseja remover este produto?");
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`http://localhost:8000/api/products/${productId}`, {
+        method: "DELETE",
+        headers: {
+          "Accept": "application/json"
+        }
+      });
+      if (!response.ok) {
+        throw new Error("Erro ao remover produto");
+      }
+      setProducts(products.filter((p) => p.id !== productId));
+      toast({
+        title: "Produto removido",
+        description: "Produto foi removido com sucesso",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Falha ao remover produto na API",
+        variant: "destructive",
+      });
+    }
   }
 
   const toggleAvailability = (productId: string) => {
@@ -284,8 +354,8 @@ export default function ProductManagement() {
                       type="number"
                       min="0"
                       placeholder="0"
-                      value={formData.quantidade}
-                      onChange={(e) => setFormData({ ...formData, quantidade: e.target.value })}
+                      value={formData.quantidade_estoque}
+                      onChange={(e) => setFormData({ ...formData, quantidade_estoque: e.target.value })}
                     />
                   </div>
                 </div>
@@ -409,9 +479,9 @@ export default function ProductManagement() {
                   {categoryProducts.map((product) => (
                     <Card key={product.id} className={`overflow-hidden ${!product.disponivel ? "opacity-60" : ""}`}>
                       <div className="aspect-square relative">
-                        {product.imagem ? (
+                        {product.imagem_url ? (
                           <img
-                            src={product.imagem || "/placeholder.svg"}
+                            src={product.imagem_url || "/placeholder.svg"}
                             alt={product.titulo}
                             className="w-full h-full object-cover"
                             onError={(e) => {
@@ -425,7 +495,7 @@ export default function ProductManagement() {
                         )}
                         <div className="absolute top-2 right-2 flex gap-1">
                           {!product.disponivel && <Badge variant="destructive">Indisponível</Badge>}
-                          {product.quantidade === 0 && <Badge variant="outline">Sem estoque</Badge>}
+                          {product.quantidade_estoque === 0 && <Badge variant="outline">Sem estoque</Badge>}
                         </div>
                       </div>
 
@@ -461,11 +531,11 @@ export default function ProductManagement() {
                       <CardContent className="pt-0">
                         <div className="flex justify-between items-center mb-2">
                           <span className="text-2xl font-bold text-green-600">R$ {product.preco.toFixed(2)}</span>
-                          <Badge variant="outline">Estoque: {product.quantidade}</Badge>
+                          <Badge variant="outline">Estoque: {product.quantidade_estoque}</Badge>
                         </div>
                         <div className="flex justify-between items-center text-sm text-muted-foreground">
                           <span>Categoria: {product.categoria}</span>
-                          <span>{new Date(product.dataCriacao).toLocaleDateString("pt-BR")}</span>
+                          <span>{new Date(product.created_at).toLocaleDateString("pt-BR")}</span>
                         </div>
                       </CardContent>
                     </Card>

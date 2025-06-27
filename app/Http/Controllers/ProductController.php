@@ -14,19 +14,19 @@ class ProductController extends Controller
     }
 
     // Criar um novo produto
-    public function store(Request $request): JsonResponse
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'titulo' => 'required|string|max:255',
             'descricao' => 'required|string',
             'preco' => 'required|numeric',
-            // 'categoria' => 'required|string|max:255',
-            // 'imagem_url' => 'required|url',
-            // 'disponivel' => 'required|boolean',
-            // 'quantidade_estoque' => 'required|integer|min:0',
+            'categoria' => 'required|string|max:255',
+            'imagem_url' => 'required|url',
+            'disponivel' => 'required|boolean',
+            'quantidade_estoque' => 'required|integer|min:0',
         ]);
 
-        $product = Product::create($request->all);
+        $product = Product::create($validated);
 
         return response()->json($product, 201);
     }
@@ -42,11 +42,19 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
+
         $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'price' => 'sometimes|required|numeric',
+            'titulo' => 'required|string|max:255',
+            'descricao' => 'required|string',
+            'preco' => 'required|numeric',
+            'categoria' => 'required|string|max:255',
+            'imagem_url' => 'required|url',
+            'disponivel' => 'required|boolean',
+            'quantidade_estoque' => 'required|integer|min:0',
         ]);
+
         $product->update($validated);
+
         return response()->json($product);
     }
 
