@@ -14,13 +14,20 @@ class ProductController extends Controller
     }
 
     // Criar um novo produto
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
+            'titulo' => 'required|string|max:255',
+            'descricao' => 'required|string',
+            'preco' => 'required|numeric',
+            // 'categoria' => 'required|string|max:255',
+            // 'imagem_url' => 'required|url',
+            // 'disponivel' => 'required|boolean',
+            // 'quantidade_estoque' => 'required|integer|min:0',
         ]);
-        $product = Product::create($validated);
+
+        $product = Product::create($request->all);
+
         return response()->json($product, 201);
     }
 
