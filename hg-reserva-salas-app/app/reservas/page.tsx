@@ -81,6 +81,9 @@ export default function ReservasPage() {
   const [isLoadingSalas, setIsLoadingSalas] = useState(true)
   const [isLoadingSolicitantes, setIsLoadingSolicitantes] = useState(true)
   const [isLoadingReservas, setIsLoadingReservas] = useState(true)
+  const [hasErrorSalas, setHasErrorSalas] = useState(false)
+  const [hasErrorSolicitantes, setHasErrorSolicitantes] = useState(false)
+  const [hasErrorReservas, setHasErrorReservas] = useState(false)
 
   const { toast } = useToast()
   const { showError } = useErrorDialog()
@@ -89,6 +92,7 @@ export default function ReservasPage() {
   const fetchSalas = async () => {
     try {
       setIsLoadingSalas(true)
+      setHasErrorSalas(false)
 
       if (USE_MOCK_DATA) {
         console.log("🎭 Usando dados mock para salas")
@@ -105,9 +109,10 @@ export default function ReservasPage() {
 
       const data = await response.json()
       console.log("🌐 Salas carregadas da API:", data)
-      setSalas(data)
+      setSalas(Array.isArray(data) ? data : [])
     } catch (error) {
       console.error("❌ Erro ao buscar salas:", error)
+      setHasErrorSalas(true)
       showError("Erro ao Carregar Salas", "Não foi possível carregar a lista de salas.")
     } finally {
       setIsLoadingSalas(false)
@@ -118,6 +123,7 @@ export default function ReservasPage() {
   const fetchSolicitantes = async () => {
     try {
       setIsLoadingSolicitantes(true)
+      setHasErrorSolicitantes(false)
 
       if (USE_MOCK_DATA) {
         console.log("🎭 Usando dados mock para solicitantes")
@@ -134,9 +140,10 @@ export default function ReservasPage() {
 
       const data = await response.json()
       console.log("🌐 Solicitantes carregados da API:", data)
-      setSolicitantes(data)
+      setSolicitantes(Array.isArray(data) ? data : [])
     } catch (error) {
       console.error("❌ Erro ao buscar solicitantes:", error)
+      setHasErrorSolicitantes(true)
       showError("Erro ao Carregar Solicitantes", "Não foi possível carregar a lista de solicitantes.")
     } finally {
       setIsLoadingSolicitantes(false)
@@ -147,6 +154,7 @@ export default function ReservasPage() {
   const fetchReservas = async () => {
     try {
       setIsLoadingReservas(true)
+      setHasErrorReservas(false)
 
       if (USE_MOCK_DATA) {
         console.log("🎭 Usando dados mock para reservas")
@@ -163,9 +171,10 @@ export default function ReservasPage() {
 
       const data = await response.json()
       console.log("🌐 Reservas carregadas da API:", data)
-      setReservas(data)
+      setReservas(Array.isArray(data) ? data : [])
     } catch (error) {
       console.error("❌ Erro ao buscar reservas:", error)
+      setHasErrorReservas(true)
       showError("Erro ao Carregar Reservas", "Não foi possível carregar a lista de reservas.")
     } finally {
       setIsLoadingReservas(false)
@@ -294,11 +303,47 @@ export default function ReservasPage() {
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="sala" className="text-system-dark">
+                    <Label htmlFor="salaId" className="text-system-dark">
                       Sala
                     </Label>
-                    <Select value={salaId} onValueChange={setSalaId} disabled={isLoadingSalas}>
-                      <SelectTrigger className="border-system-secondary focus:border-system-primary focus:ring-system-primary">
+                    {/* O componente Radix Select não gera um <select> nativo, mas sim um <button>.
+                        Para acessibilidade, mantenha o id no SelectTrigger e o htmlFor no Label.
+                        Se for necessário um <select> nativo para integração com navegadores/autofill,
+                        troque o componente por um <select> HTML padrão, assim: */}
+                    {/* 
+                    <select
+                      id="salaId"
+                      value={salaId}
+                      onChange={e => setSalaId(e.target.value)}
+                      disabled={isLoadingSalas || hasErrorSalas}
+                      className="border-system-secondary focus:border-system-primary focus:ring-system-primary w-full h-10 rounded-md px-3 py-2"
+                    >
+                      <option value="" disabled>
+                        {isLoadingSalas
+                          ? "Carregando salas..."
+                          : hasErrorSalas
+                          ? "Erro ao carregar salas"
+                          : salas.length === 0
+                          ? "Nenhuma sala disponível"
+                          : "Selecione uma sala"}
+                      </option>
+                      {salas.map((sala) => (
+                        <option key={sala.id} value={sala.id}>
+                          {sala.nome}
+                        </option>
+                      ))}
+                    </select>
+                    */}
+                    {/* Se quiser manter o Radix Select, mantenha como está abaixo: */}
+                    <Select
+                      value={salaId}
+                      onValueChange={setSalaId}
+                      disabled={isLoadingSalas || hasErrorSalas}
+                    >
+                      <SelectTrigger
+                        id="salaId"
+                        className="border-system-secondary focus:border-system-primary focus:ring-system-primary"
+                      >
                         <SelectValue
                           placeholder={
                             isLoadingSalas ? (
@@ -306,6 +351,10 @@ export default function ReservasPage() {
                                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                                 Carregando salas...
                               </div>
+                            ) : hasErrorSalas ? (
+                              "Erro ao carregar salas"
+                            ) : salas.length === 0 ? (
+                              "Nenhuma sala disponível"
                             ) : (
                               "Selecione uma sala"
                             )
@@ -323,11 +372,18 @@ export default function ReservasPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="solicitante" className="text-system-dark">
+                    <Label htmlFor="solicitanteId" className="text-system-dark">
                       Solicitante
                     </Label>
-                    <Select value={solicitanteId} onValueChange={setSolicitanteId} disabled={isLoadingSolicitantes}>
-                      <SelectTrigger className="border-system-secondary focus:border-system-primary focus:ring-system-primary">
+                    <Select
+                      value={solicitanteId}
+                      onValueChange={setSolicitanteId}
+                      disabled={isLoadingSolicitantes || hasErrorSolicitantes}
+                    >
+                      <SelectTrigger
+                        id="solicitanteId"
+                        className="border-system-secondary focus:border-system-primary focus:ring-system-primary"
+                      >
                         <SelectValue
                           placeholder={
                             isLoadingSolicitantes ? (
@@ -335,6 +391,10 @@ export default function ReservasPage() {
                                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                                 Carregando solicitantes...
                               </div>
+                            ) : hasErrorSolicitantes ? (
+                              "Erro ao carregar solicitantes"
+                            ) : solicitantes.length === 0 ? (
+                              "Nenhum solicitante disponível"
                             ) : (
                               "Selecione um solicitante"
                             )
@@ -352,11 +412,11 @@ export default function ReservasPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="data" className="text-system-dark">
+                    <Label htmlFor="dataReserva" className="text-system-dark">
                       Data da Reserva
                     </Label>
                     <Input
-                      id="data"
+                      id="dataReserva"
                       type="date"
                       value={dataReserva}
                       onChange={(e) => setDataReserva(e.target.value)}
@@ -372,7 +432,10 @@ export default function ReservasPage() {
                         Hora de Início
                       </Label>
                       <Select value={horaInicio} onValueChange={setHoraInicio}>
-                        <SelectTrigger className="border-system-secondary focus:border-system-primary focus:ring-system-primary">
+                        <SelectTrigger
+                          id="horaInicio"
+                          className="border-system-secondary focus:border-system-primary focus:ring-system-primary"
+                        >
                           <SelectValue placeholder="Selecione o horário" />
                         </SelectTrigger>
                         <SelectContent>
@@ -390,7 +453,10 @@ export default function ReservasPage() {
                         Hora de Fim
                       </Label>
                       <Select value={horaFim} onValueChange={setHoraFim}>
-                        <SelectTrigger className="border-system-secondary focus:border-system-primary focus:ring-system-primary">
+                        <SelectTrigger
+                          id="horaFim"
+                          className="border-system-secondary focus:border-system-primary focus:ring-system-primary"
+                        >
                           <SelectValue placeholder="Selecione o horário" />
                         </SelectTrigger>
                         <SelectContent>
@@ -407,7 +473,9 @@ export default function ReservasPage() {
                   <Button
                     type="submit"
                     className="w-full bg-system-primary hover:bg-system-primary/90 text-white"
-                    disabled={isLoading || isLoadingSalas || isLoadingSolicitantes}
+                    disabled={
+                      isLoading || isLoadingSalas || isLoadingSolicitantes || hasErrorSalas || hasErrorSolicitantes
+                    }
                   >
                     {isLoading ? (
                       <>
@@ -438,6 +506,19 @@ export default function ReservasPage() {
                   <div className="flex items-center justify-center py-8">
                     <Loader2 className="w-6 h-6 animate-spin text-system-primary" />
                     <span className="ml-2 text-system-primary">Carregando reservas...</span>
+                  </div>
+                ) : hasErrorReservas ? (
+                  <div className="text-center py-8 text-red-600">
+                    <Calendar className="w-12 h-12 mx-auto mb-4 text-red-400" />
+                    <p>Erro ao carregar reservas.</p>
+                    <p className="text-sm text-red-500 mt-1">Verifique sua conexão e tente novamente.</p>
+                    <Button
+                      onClick={fetchReservas}
+                      variant="outline"
+                      className="mt-4 border-red-300 text-red-600 hover:bg-red-50 bg-transparent"
+                    >
+                      Tentar Novamente
+                    </Button>
                   </div>
                 ) : reservas.length === 0 ? (
                   <div className="text-center py-8 text-system-primary">
