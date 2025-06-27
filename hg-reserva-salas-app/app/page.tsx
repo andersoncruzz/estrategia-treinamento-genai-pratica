@@ -2,9 +2,15 @@
 
 import { useState, useEffect } from "react"
 import { Navigation } from "@/components/navigation"
-import { Loader2 } from "lucide-react"
+import { Loader2, CalendarIcon } from "lucide-react"
 import { useErrorDialog } from "@/contexts/error-dialog-context"
 import { API_ENDPOINTS, USE_MOCK_DATA } from "@/lib/api"
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { format } from "date-fns"
+import { ptBR } from "date-fns/locale"
+import { cn } from "@/lib/utils"
 import {
   MOCK_SALAS,
   MOCK_SOLICITANTES,
@@ -58,7 +64,8 @@ export default function HomePage() {
   const [solicitantes, setSolicitantes] = useState<Solicitante[]>([])
   const [reservas, setReservas] = useState<Reserva[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [dataAtual] = useState(new Date().toLocaleDateString("pt-BR"))
+  const [dataSelecionada, setDataSelecionada] = useState<Date>(new Date())
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false)
   const { showError } = useErrorDialog()
 
   // Função para buscar salas da API ou mock
@@ -146,6 +153,12 @@ export default function HomePage() {
         setSalas(salasData)
         setSolicitantes(solicitantesData)
         setReservas(reservasData)
+
+        console.log("📊 Dados carregados:", {
+          salas: salasData.length,
+          solicitantes: solicitantesData.length,
+          reservas: reservasData.length,
+        })
       } catch (error) {
         console.error("❌ Erro ao carregar dados do calendário:", error)
         showError(
@@ -166,11 +179,14 @@ export default function HomePage() {
     return solicitante?.nome || "Solicitante não encontrado"
   }
 
-  // Filtrar reservas para a data atual (ou você pode adicionar um seletor de data)
-  const reservasHoje = reservas.filter((reserva) => {
-    const hoje = new Date().toISOString().split("T")[0]
-    return reserva.dataReserva === hoje
+  // Filtrar reservas para a data selecionada
+  const dataSelecionadaString = format(dataSelecionada, "yyyy-MM-dd")
+  const reservasDataSelecionada = reservas.filter((reserva) => {
+    console.log(`🔍 Comparando reserva ${reserva.id}: ${reserva.dataReserva} === ${dataSelecionadaString}`)
+    return reserva.dataReserva === dataSelecionadaString
   })
+
+  console.log(`📅 Reservas para ${dataSelecionadaString}:`, reservasDataSelecionada)
 
   return (
     <div className="min-h-screen bg-system-background">
@@ -213,9 +229,40 @@ export default function HomePage() {
               <div className="flex">
                 {/* Primeira coluna fixa */}
                 <div className="flex-shrink-0">
-                  {/* Header da primeira coluna */}
+                  {/* Header da primeira coluna com DatePicker */}
                   <div className="w-[150px] sm:w-[200px] px-2 sm:px-4 py-3 text-left font-semibold text-system-dark bg-system-secondary border-b border-r border-system-primary h-[60px] flex items-center text-sm sm:text-base">
-                    {dataAtual}
+                    <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className={cn(
+                            "w-full justify-start text-left font-semibold p-0 h-auto hover:bg-transparent text-system-dark",
+                            !dataSelecionada && "text-muted-foreground",
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          <span className="truncate">
+                            {dataSelecionada ? format(dataSelecionada, "dd/MM/yyyy", { locale: ptBR }) : "Selecionar"}
+                          </span>
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={dataSelecionada}
+                          onSelect={(date) => {
+                            if (date) {
+                              setDataSelecionada(date)
+                              setIsCalendarOpen(false)
+                            }
+                          }}
+                          disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                          initialFocus
+                          locale={ptBR}
+                          className="rounded-md border"
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
                   {/* Linhas da primeira coluna */}
                   <div className="divide-y divide-system-secondary">
@@ -267,13 +314,26 @@ export default function HomePage() {
                       )}
 
                       {/* Reservas */}
-                      {reservasHoje.map((reserva) => {
+                      {reservasDataSelecionada.map((reserva) => {
                         const startCol = getGridColumn(reserva.horaInicio)
                         const endCol = getGridColumn(reserva.horaFim)
                         const row = getSalaRow(reserva.salaId, salas)
 
+                        console.log(`🎯 Renderizando reserva ${reserva.id}:`, {
+                          salaId: reserva.salaId,
+                          horaInicio: reserva.horaInicio,
+                          horaFim: reserva.horaFim,
+                          startCol,
+                          endCol,
+                          row,
+                          salaEncontrada: salas.find((s) => s.id === reserva.salaId)?.nome,
+                        })
+
                         // Se a sala não foi encontrada, não renderizar a reserva
-                        if (row === 1) return null
+                        if (row === 1) {
+                          console.log(`⚠️ Sala não encontrada para reserva ${reserva.id}`)
+                          return null
+                        }
 
                         const nomeCompleto = getNomeSolicitante(reserva.solicitanteId)
                         const primeiroNome = nomeCompleto.split(" ")[0]
@@ -281,7 +341,7 @@ export default function HomePage() {
                         return (
                           <div
                             key={reserva.id}
-                            className="bg-system-primary text-white px-1 sm:px-2 py-2 rounded-md text-xs font-medium flex items-center justify-center m-1 shadow-sm hover:bg-system-primary/90 transition-colors cursor-pointer"
+                            className="bg-system-primary text-white px-1 sm:px-2 py-2 rounded-md text-xs font-medium flex items-center justify-center m-1 shadow-sm hover:bg-system-primary/90 transition-colors cursor-pointer z-10"
                             style={{
                               gridColumnStart: startCol,
                               gridColumnEnd: endCol,
@@ -327,10 +387,12 @@ export default function HomePage() {
                 <div className="w-4 h-4 bg-system-surface border border-system-secondary rounded"></div>
                 <span className="text-system-primary">Disponível</span>
               </div>
-              <div className="text-system-secondary">Mostrando reservas para hoje ({dataAtual})</div>
-              {reservasHoje.length > 0 && (
+              <div className="text-system-secondary">
+                Mostrando reservas para {format(dataSelecionada, "dd/MM/yyyy", { locale: ptBR })}
+              </div>
+              {reservasDataSelecionada.length > 0 && (
                 <div className="text-system-primary font-medium">
-                  {reservasHoje.length} reserva{reservasHoje.length !== 1 ? "s" : ""} hoje
+                  {reservasDataSelecionada.length} reserva{reservasDataSelecionada.length !== 1 ? "s" : ""} neste dia
                 </div>
               )}
             </div>
