@@ -231,9 +231,9 @@ export default function ReservasPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            salaId,
-            solicitanteId,
-            dataReserva,
+            salaId: Number(salaId),
+            solicitanteId: Number(solicitanteId),
+            data: dataReserva,
             horaInicio,
             horaFim,
           }),
