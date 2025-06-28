@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// This is the Prisma schema file for the Reserva de Salas API
+model Sala {
+  id    Int     @id @default(autoincrement())
+  nome  String
+  reservas Reserva[]
+}
+
+model Solicitante {
+  id    Int     @id @default(autoincrement())
+  nome  String
+  email String
+  reservas Reserva[]
+}
+
+model Reserva {
+  id             Int          @id @default(autoincrement())
+  salaId         Int
+  solicitanteId  Int
+  data           String
+  horaInicio     String
+  horaFim        String
+  sala           Sala         @relation(fields: [salaId], references: [id])
+  solicitante    Solicitante  @relation(fields: [solicitanteId], references: [id])
+}
