@@ -1,0 +1,7 @@
+com\agenda\contatos\model\Contato.class
+com\agenda\contatos\exception\ResourceNotFoundException.class
+com\agenda\contatos\controller\ContatoController.class
+com\agenda\AgendaApplication.class
+com\example\jarlanagenda\StatusController.class
+com\agenda\contatos\repository\ContatoRepository.class
+com\example\jarlanagenda\JarlanAgendaApplication.class
